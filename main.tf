@@ -13,10 +13,16 @@ module "vpc" {
 
  module "public-lb" {
   source            = "./modules/alb"
-
   env               = var.env
   internal          = false
   subnets           = module.vpc.public_subnets
   vpc_id            = module.vpc.vpc_id
-    }
+  alb_sg_allow_cidr = "0.0.0.0/0"
+  alb_type = "public"
+  dns_name = "frontend -${var.env}.nagarjunagroup.homes"
+  tg_arn = module.public-lb.tg_arn
+  zone_id = "Z01647203AMR5YS0AL6YN"
+ 
 
+
+ }

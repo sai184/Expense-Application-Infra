@@ -40,7 +40,8 @@ resource "aws_lb" "alb" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.security_group.id]
   subnets            = var.subnets
-  tags = {
+  tags               = {
     Environment = "${var.env}-${var.alb_type}"
   }
 }
+
