@@ -20,9 +20,24 @@ module "vpc" {
   alb_sg_allow_cidr = "0.0.0.0/0"
   alb_type = "public"
   dns_name = "frontend -${var.env}.nagarjunagroup.homes"
-  tg_arn = module.public-lb.tg_arn
+  tg_arn = module.frontend.tg_arn
   zone_id = "Z01647203AMR5YS0AL6YN"
  
 
 
  }
+
+module "private-lb" {
+  source            = "./modules/alb"
+  env               = var.env
+  internal          = true
+  subnets           = module.vpc.private_subnets
+  vpc_id            = module.vpc.vpc_id
+  alb_sg_allow_cidr = "10.0.0.0/16"
+  alb_type = "private"
+  dns_name = "backend -${var.env}.nagarjunagroup.homes"
+  tg_arn = module.backend.tg_arn
+  zone_id = "Z01647203AMR5YS0AL6YN"
+}
+
+

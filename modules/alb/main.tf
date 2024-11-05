@@ -45,3 +45,47 @@ resource "aws_lb" "alb" {
   }
 }
 
+
+
+resource "aws_lb_listener" "public_HTTP_listener_ALB" {
+  count = var.alb_type == "public" ? 1:0
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+resource "aws_lb_listener" "private_HTTP_listener_ALB" {
+  count = var.alb_type == "private" ? 1:0
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+ # ssl_policy        = "ELBSecurityPolicy-2016-08"
+  #certificate_arn   = var.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = var.tg_arn
+  }
+}
+resource "aws_lb_listener" "public_HTTPS_listener_ALB" {
+  count = var.alb_type == "public" ? 1:0
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = ""
+
+  default_action {
+    type             = "forward"
+    target_group_arn = var.tg_arn
+  }
+}
